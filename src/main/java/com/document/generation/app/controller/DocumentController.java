@@ -1,7 +1,9 @@
 package com.document.generation.app.controller;
 
 import com.document.generation.app.entity.DocumentFile;
+import com.document.generation.app.service.DocumentProcessService;
 import com.document.generation.app.service.DocumentService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/documents")
@@ -34,30 +37,27 @@ public class DocumentController {
             DocumentFile documentFile = documentService.uploadDocument(templateFile, jsonFile);
             return ResponseEntity.ok("File uploaded successfully with ID: " + documentFile.getId());
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    @GetMapping("/download/{format}")
-    public ResponseEntity<byte[]> downloadFile(@PathVariable String format) throws Exception {
-        Map<String, Object> model = Map.of(
-            "name", "John Doe",
-            "items", List.of(
-                Map.of("name", "Item 1", "quantity", "10", "price", "100"),
-                Map.of("name", "Item 2", "quantity", "20", "price", "200")
-            )
-        );
+    @GetMapping("/download/word/{id}")
+    public ResponseEntity<byte[]> downloadWord(@PathVariable Long id) {
+        Optional<DocumentFile> optionalDocument = documentService.findById(id);
+        if (optionalDocument.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
 
-        byte[] content = "pdf".equalsIgnoreCase(format) ? null : documentService.generateWord(model);
+        DocumentFile documentFile = optionalDocument.get();
+        try {
+            byte[] processedDocument = DocumentProcessService.generateWordDocument(documentFile.getTemplateContent(), documentFile.getJsonFileContent());
 
-        String filename = "document." + format;
-        MediaType mediaType = "pdf".equalsIgnoreCase(format)
-                ? MediaType.APPLICATION_PDF
-                : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(mediaType)
-                .body(content);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=generated.docx")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(processedDocument);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 }
