@@ -8,5 +8,5 @@ import java.util.Map;
 public interface DocumentService {
 
     byte[] generateWord(Map<String, Object> model) throws Exception;
-    DocumentFile uploadDocument(MultipartFile file) throws Exception;
+    DocumentFile uploadDocument(MultipartFile templateFile, MultipartFile jsonFile) throws Exception;
 }

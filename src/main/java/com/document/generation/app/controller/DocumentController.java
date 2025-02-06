@@ -22,9 +22,16 @@ public class DocumentController {
     private DocumentService documentService;
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadFile(
+            @RequestParam("template") MultipartFile templateFile,
+            @RequestParam("jsonFile") MultipartFile jsonFile
+    ) {
+        if (templateFile.isEmpty() || jsonFile.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please upload both Word and JSON files!");
+        }
+
         try {
-            DocumentFile documentFile = documentService.uploadDocument(file);
+            DocumentFile documentFile = documentService.uploadDocument(templateFile, jsonFile);
             return ResponseEntity.ok("File uploaded successfully with ID: " + documentFile.getId());
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -41,9 +48,7 @@ public class DocumentController {
             )
         );
 
-        byte[] content = "pdf".equalsIgnoreCase(format)
-                ? documentService.generatePDF(model)
-                : documentService.generateWord(model);
+        byte[] content = "pdf".equalsIgnoreCase(format) ? null : documentService.generateWord(model);
 
         String filename = "document." + format;
         MediaType mediaType = "pdf".equalsIgnoreCase(format)

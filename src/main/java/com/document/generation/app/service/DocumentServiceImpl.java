@@ -24,11 +24,15 @@ public class DocumentServiceImpl implements DocumentService {
      * Uploads and stores a document in the database.
      */
     @Override
-    public DocumentFile uploadDocument(MultipartFile file) throws IOException {
+    public DocumentFile uploadDocument(MultipartFile templateFile, MultipartFile jsonFile) throws IOException {
         DocumentFile doc = new DocumentFile();
-        doc.setName(file.getOriginalFilename());
-        doc.setType(file.getContentType());
-        doc.setContent(file.getBytes());
+        doc.setTemplateName(templateFile.getOriginalFilename());
+        doc.setTemplateType(templateFile.getContentType());
+        doc.setTemplateContent(templateFile.getBytes());
+
+        doc.setJsonFileName(jsonFile.getOriginalFilename());
+        doc.setJsonFileType(jsonFile.getContentType());
+        doc.setJsonFileContent(jsonFile.getBytes());
 
         return documentFileRepository.save(doc);
     }

@@ -8,12 +8,16 @@ public class DocumentFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String name;
-    private String type;
+    private String templateName;
+    private String templateType;
 
     @Lob
-    private byte[] content;
+    private byte[] templateContent;
+
+    private String jsonFileName;
+    private String jsonFileType;
+    @Lob
+    private byte[] jsonFileContent;
 
 
     public Long getId() {
@@ -24,27 +28,52 @@ public class DocumentFile {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTemplateName() {
+        return templateName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
     }
 
-    public String getType() {
-        return type;
+    public String getTemplateType() {
+        return templateType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTemplateType(String templateType) {
+        this.templateType = templateType;
     }
 
-    public byte[] getContent() {
-        return content;
+    public byte[] getTemplateContent() {
+        return templateContent;
     }
 
-    public void setContent(byte[] content) {
-        this.content = content;
+    public void setTemplateContent(byte[] templateContent) {
+        this.templateContent = templateContent;
     }
+
+    public String getJsonFileName() {
+        return jsonFileName;
+    }
+
+    public void setJsonFileName(String jsonFileName) {
+        this.jsonFileName = jsonFileName;
+    }
+
+    public String getJsonFileType() {
+        return jsonFileType;
+    }
+
+    public void setJsonFileType(String jsonFileType) {
+        this.jsonFileType = jsonFileType;
+    }
+
+    public byte[] getJsonFileContent() {
+        return jsonFileContent;
+    }
+
+    public void setJsonFileContent(byte[] jsonFileContent) {
+        this.jsonFileContent = jsonFileContent;
+    }
+
 }
