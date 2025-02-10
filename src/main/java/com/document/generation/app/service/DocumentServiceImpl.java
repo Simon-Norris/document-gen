@@ -27,9 +27,6 @@ public class DocumentServiceImpl implements DocumentService {
         doc.setTemplateType(templateFile.getContentType());
         doc.setTemplateContent(templateFile.getBytes());
 
-//        boolean isValidJson = JsonValidator.isValidJson(jsonFile.getResource().getFile());
-//        if (!isValidJson) throw new Exception("Please upload valid json");
-
         doc.setJsonFileName(jsonFile.getOriginalFilename());
         doc.setJsonFileType(jsonFile.getContentType());
         doc.setJsonFileContent(jsonFile.getBytes());
