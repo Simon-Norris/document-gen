@@ -1,9 +1,8 @@
 package com.document.generation.app.controller;
 
 import com.document.generation.app.entity.DocumentFile;
-import com.document.generation.app.service.DocumentProcessService;
+import com.document.generation.app.service.DocumentProcessor;
 import com.document.generation.app.service.DocumentService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -50,7 +47,7 @@ public class DocumentController {
 
         DocumentFile documentFile = optionalDocument.get();
         try {
-            byte[] processedDocument = DocumentProcessService.generateWordDocument(documentFile.getTemplateContent(), documentFile.getJsonFileContent());
+            byte[] processedDocument = DocumentProcessor.generateDocument(documentFile.getTemplateContent(), documentFile.getJsonFileContent());
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=generated.docx")
