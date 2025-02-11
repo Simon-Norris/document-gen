@@ -83,6 +83,7 @@ public class DocumentController {
                     .contentType(contentType)
                     .body(processedDocument);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(500).body(null);
         }
     }
