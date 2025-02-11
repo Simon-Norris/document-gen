@@ -12,10 +12,17 @@ public class DocumentRendererFactory {
     }
 
     public DocumentRenderer getRenderer(RenderType type) {
-        return switch (type) {
-            case MUSTACHE -> new MustacheRenderer(objectMapper);
-            case FREEMARKER -> new FreeMarkerRenderer(objectMapper);
-            default -> throw new IllegalArgumentException("Unsupported renderer type: " + type);
-        };
+        switch (type) {
+            case MUSTACHE:
+                return new MustacheRenderer(objectMapper);
+            case FREEMARKER:
+                try {
+                    return new FreeMarkerRenderer(objectMapper);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to initialize Freemarker renderer", e);
+                }
+            default:
+                throw new IllegalArgumentException("Unsupported renderer type: " + type);
+        }
     }
 }
