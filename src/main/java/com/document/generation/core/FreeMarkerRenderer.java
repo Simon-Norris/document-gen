@@ -23,7 +23,7 @@ public class FreeMarkerRenderer implements DocumentRenderer {
 
     @Override
     public <T, R> R render(T template, Object... args) {
-        Map<String, Object> context = (Map<String, Object>) args[0];  // Convert args to Map
+        Map<String, Object> context = (Map<String, Object>) args[0];
         if (context.isEmpty()) throw new IllegalArgumentException("No data were provided");
 
         Template freemarkerTemplate = null;
