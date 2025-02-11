@@ -93,7 +93,7 @@ public class FreeMarkerRendererTest {
 
         String renderedOutput = freemarkerRenderer.render(templatePath, dataModel);
 
-        assertEquals("Hello Dear John! You have 5 unread messages.", renderedOutput);
+        assertEquals("Hello Dear John! You have 5 unread messages.\r\n", renderedOutput);
     }
 
     @Test

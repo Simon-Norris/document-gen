@@ -1,1 +1,1 @@
-<p>Hello Dear {{name}}! You have {{count}} unread messages.<</p>
+Hello Dear ${name}! You have ${count} unread messages.

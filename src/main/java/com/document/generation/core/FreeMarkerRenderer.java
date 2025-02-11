@@ -1,15 +1,15 @@
 package com.document.generation.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-@Service
 public class FreeMarkerRenderer implements DocumentRenderer {
     private final ObjectMapper objectMapper;
     private final Configuration freemarkerConfig;
@@ -19,6 +19,9 @@ public class FreeMarkerRenderer implements DocumentRenderer {
 
         freemarkerConfig = new Configuration(Configuration.VERSION_2_3_31);
         freemarkerConfig.setDefaultEncoding("UTF-8");
+
+        // Set default template loader to the file system
+        freemarkerConfig.setTemplateLoader(createTemplateLoader());
     }
 
     @Override
@@ -37,7 +40,7 @@ public class FreeMarkerRenderer implements DocumentRenderer {
             } else if (template instanceof String) {
                 String templateStr = (String) template;
                 if (isClasspathResource(templateStr)) {
-                    freemarkerTemplate = freemarkerConfig.getTemplate(templateStr);
+                    freemarkerTemplate = freemarkerConfig.getTemplate(templateStr.replace("classpath:", ""));
                 } else {
                     freemarkerTemplate = new Template(templateName, templateStr, freemarkerConfig);
                 }
@@ -66,5 +69,9 @@ public class FreeMarkerRenderer implements DocumentRenderer {
 
     private boolean isClasspathResource(String templateStr) {
         return templateStr.startsWith("classpath:");
+    }
+
+    private TemplateLoader createTemplateLoader() {
+        return new ClassTemplateLoader(getClass(), "/");
     }
 }
