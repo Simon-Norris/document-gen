@@ -57,6 +57,8 @@ public class DocumentController {
             savedFormat = "docx";
         } else if (isHtmlDoc && format.equals("html")) {
             savedFormat = "html";
+        } else if (format.equals("ftl")) {
+            savedFormat="html";
         } else {
             return ResponseEntity.status(400).body(null);
         }

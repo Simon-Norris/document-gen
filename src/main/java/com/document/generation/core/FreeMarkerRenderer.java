@@ -23,43 +23,48 @@ public class FreeMarkerRenderer implements DocumentRenderer {
 
     @Override
     public <T, R> R render(T template, Object... args) {
-        if (template == null) throw new IllegalArgumentException("Template must be provided.");
+        Map<String, Object> context = (Map<String, Object>) args[0];  // Convert args to Map
+        if (context.isEmpty()) throw new IllegalArgumentException("No data were provided");
 
-        Map<String, Object> context = objectMapper.convertValue(args[0], Map.class);
-        StringWriter writer = new StringWriter();
+        Template freemarkerTemplate = null;
+        String templateName = "template";
 
         try {
-            Template freemarkerTemplate = null;
-
-            switch (template.getClass().getName()) {
-                case "byte[]":
-                    byte[] templateBytes = (byte[]) template;
-                    String templateString = new String(templateBytes, StandardCharsets.UTF_8);
-                    freemarkerTemplate = new Template("template", templateString, freemarkerConfig);
-                    break;
-                case "java.lang.String":
-                    String templateStr = (String) template;
+            if (template instanceof byte[]) {
+                byte[] templateBytes = (byte[]) template;
+                String templateString = new String(templateBytes, StandardCharsets.UTF_8);
+                freemarkerTemplate = new Template(templateName, templateString, freemarkerConfig);
+            } else if (template instanceof String) {
+                String templateStr = (String) template;
+                if (isClasspathResource(templateStr)) {
                     freemarkerTemplate = freemarkerConfig.getTemplate(templateStr);
-                    break;
-                case "java.io.File":
-                    File templateFile = (File) template;
-                    freemarkerTemplate = new Template("template",
-                            new InputStreamReader(new FileInputStream(templateFile), StandardCharsets.UTF_8), freemarkerConfig);
-                    break;
-                case "java.io.InputStream":
-                    InputStream templateStream = (InputStream) template;
-                    freemarkerTemplate = new Template("template",
-                            new InputStreamReader(templateStream, StandardCharsets.UTF_8), freemarkerConfig);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unsupported template type: " + template.getClass().getName());
+                } else {
+                    freemarkerTemplate = new Template(templateName, templateStr, freemarkerConfig);
+                }
+            } else if (template instanceof File) {
+                File templateFile = (File) template;
+                freemarkerTemplate = new Template(templateName,
+                        new InputStreamReader(new FileInputStream(templateFile), StandardCharsets.UTF_8),
+                        freemarkerConfig);
+            } else if (template instanceof InputStream) {
+                InputStream templateStream = (InputStream) template;
+                freemarkerTemplate = new Template(templateName,
+                        new InputStreamReader(templateStream, StandardCharsets.UTF_8),
+                        freemarkerConfig);
+            } else {
+                throw new IllegalArgumentException("Unsupported template type: " + template.getClass().getName());
             }
 
+            StringWriter writer = new StringWriter();
             freemarkerTemplate.process(context, writer);
 
             return (R) writer.toString();
         } catch (Exception e) {
             throw new RuntimeException("Error processing Freemarker template", e);
         }
+    }
+
+    private boolean isClasspathResource(String templateStr) {
+        return templateStr.startsWith("classpath:");
     }
 }

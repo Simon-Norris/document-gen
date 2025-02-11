@@ -32,13 +32,17 @@ public class DocumentProcessor {
 
         boolean isWordDoc = docType.equals("docx");
         boolean isHtmlDoc = docType.equals("html");
+        boolean isFtlDoc = docType.equals("ftl");
 
         if (isWordDoc) {
-            return createWordDocument(renderTemplate(extractTextFromDocx(documentFile.getTemplateContent()), jsonNode));
+            return createWordDocument(renderTemplate(extractTextFromDocx(documentFile.getTemplateContent()), jsonNode, RenderType.MUSTACHE));
         } else if (isHtmlDoc) {
-            String generatedContent = renderTemplate(new String(documentFile.getTemplateContent()), jsonNode);
+            String generatedContent = renderTemplate(new String(documentFile.getTemplateContent()), jsonNode, RenderType.MUSTACHE);
             return generatedContent.getBytes();
-        } else {
+        }  else if (isFtlDoc) {
+            String generatedContent = renderTemplate(documentFile.getTemplateContent(), jsonNode, RenderType.FREEMARKER);
+            return generatedContent.getBytes();
+        }  else {
             throw new IllegalArgumentException("Template not identified");
         }
     }
@@ -57,8 +61,8 @@ public class DocumentProcessor {
             throw new IllegalArgumentException("Failed to extract text from .docx file", e);
         }
     }
-    private  String renderTemplate(String template, JsonNode jsonNode) {
-        DocumentRenderer renderer = this.rendererFactory.getRenderer(RenderType.MUSTACHE);
+    private <T> String renderTemplate(T template, JsonNode jsonNode, RenderType renderType) {
+        DocumentRenderer renderer = this.rendererFactory.getRenderer(renderType);
         return renderer.render(template, jsonNode);
     }
 
