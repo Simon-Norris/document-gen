@@ -58,7 +58,7 @@ public class DocumentController {
         } else if (isHtmlDoc && format.equals("html")) {
             savedFormat = "html";
         } else if (format.equals("ftl")) {
-            savedFormat="html";
+            savedFormat="ftl";
         } else {
             return ResponseEntity.status(400).body(null);
         }
@@ -75,6 +75,10 @@ public class DocumentController {
                     break;
                 case "docx":
                     contentType = MediaType.APPLICATION_OCTET_STREAM;
+                    break;
+                case "ftl":
+                    contentType = MediaType.TEXT_HTML;
+                    fileName="generated.html";
                     break;
                 default:
                     return ResponseEntity.badRequest().body(null);
