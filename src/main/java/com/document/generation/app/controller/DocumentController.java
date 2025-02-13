@@ -1,8 +1,11 @@
 package com.document.generation.app.controller;
 
+import com.document.generation.app.dto.RichTemplateRequest;
 import com.document.generation.app.entity.DocumentFile;
+import com.document.generation.app.entity.RichTemplate;
 import com.document.generation.app.service.DocumentProcessor;
 import com.document.generation.app.service.DocumentService;
+import com.document.generation.app.service.RichTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -24,6 +28,9 @@ public class DocumentController {
 
     @Autowired
     private DocumentProcessor documentProcessor;
+
+    @Autowired
+    private RichTemplateService richTemplateService;
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(
@@ -83,6 +90,47 @@ public class DocumentController {
                 default:
                     return ResponseEntity.badRequest().body(null);
             }
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+                    .contentType(contentType)
+                    .body(processedDocument);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @PostMapping("/create-rich-template")
+    public ResponseEntity<?> uploadFile(@RequestBody RichTemplateRequest request) {
+        if (request == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request invalid");
+
+        try {
+            RichTemplate richTemplate = new RichTemplate();
+            richTemplate.setContent(request.content());
+            richTemplate.setName(request.name());
+            richTemplate.setJson(request.json());
+            richTemplate.setLocalDateTime(LocalDateTime.now());
+
+            RichTemplate save = richTemplateService.save(richTemplate);
+            return ResponseEntity.status(HttpStatus.CREATED).body(Collections.singletonMap("templateId", save.getId()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/generate/{id}")
+    public ResponseEntity<byte[]> generate(@PathVariable Long id) {
+        Optional<RichTemplate> richTemplateOptional = richTemplateService.findById(id);
+        if (richTemplateOptional.isEmpty()) return ResponseEntity.notFound().build();
+
+        RichTemplate documentFile = richTemplateOptional.get();
+
+        try {
+            byte[] processedDocument = documentProcessor.generateDocument(documentFile, "ftl");
+
+            String fileName = "generated.txt";
+            MediaType contentType  = MediaType.TEXT_PLAIN;
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)

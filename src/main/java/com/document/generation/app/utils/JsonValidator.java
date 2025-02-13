@@ -14,4 +14,12 @@ public class JsonValidator {
             throw new IllegalArgumentException("Invalid JSON format", e);
         }
     }
+
+    public static JsonNode parseJson(ObjectMapper objectMapper, String jsonData) {
+        try {
+            return objectMapper.readTree(jsonData);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid JSON format", e);
+        }
+    }
 }

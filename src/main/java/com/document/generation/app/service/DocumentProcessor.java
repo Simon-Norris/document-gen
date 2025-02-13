@@ -1,6 +1,7 @@
 package com.document.generation.app.service;
 
 import com.document.generation.app.entity.DocumentFile;
+import com.document.generation.app.entity.RichTemplate;
 import com.document.generation.app.utils.JsonValidator;
 import com.document.generation.core.DocumentRenderer;
 import com.document.generation.core.DocumentRendererFactory;
@@ -12,6 +13,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.springframework.stereotype.Component;
 
+import javax.print.Doc;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,23 +29,31 @@ public class DocumentProcessor {
         this.objectMapper = objectMapper;
     }
 
-    public  byte[] generateDocument(DocumentFile documentFile, String docType) {
-        JsonNode jsonNode = JsonValidator.parseJson(objectMapper, documentFile.getJsonFileContent());
+    public  <T> byte[] generateDocument(T entity, String docType) {
+        if (entity instanceof DocumentFile documentFile) {
+            JsonNode jsonNode = JsonValidator.parseJson(objectMapper, documentFile.getJsonFileContent());
 
-        boolean isWordDoc = docType.equals("docx");
-        boolean isHtmlDoc = docType.equals("html");
-        boolean isFtlDoc = docType.equals("ftl");
+            boolean isWordDoc = docType.equals("docx");
+            boolean isHtmlDoc = docType.equals("html");
+            boolean isFtlDoc = docType.equals("ftl");
 
-        if (isWordDoc) {
-            return createWordDocument(renderTemplate(extractTextFromDocx(documentFile.getTemplateContent()), jsonNode, RenderType.MUSTACHE));
-        } else if (isHtmlDoc) {
-            String generatedContent = renderTemplate(new String(documentFile.getTemplateContent()), jsonNode, RenderType.MUSTACHE);
+            if (isWordDoc) {
+                return createWordDocument(renderTemplate(extractTextFromDocx(documentFile.getTemplateContent()), jsonNode, RenderType.MUSTACHE));
+            } else if (isHtmlDoc) {
+                String generatedContent = renderTemplate(new String(documentFile.getTemplateContent()), jsonNode, RenderType.MUSTACHE);
+                return generatedContent.getBytes();
+            } else if (isFtlDoc) {
+                String generatedContent = renderTemplate(documentFile.getTemplateContent(), jsonNode, RenderType.FREEMARKER);
+                return generatedContent.getBytes();
+            } else {
+                throw new IllegalArgumentException("Template not identified");
+            }
+        } else if (entity instanceof RichTemplate richTemplate) {
+            JsonNode jsonNode = JsonValidator.parseJson(objectMapper, richTemplate.getJson());
+            String generatedContent = renderTemplate(richTemplate.getContent(), jsonNode, RenderType.FREEMARKER);
             return generatedContent.getBytes();
-        }  else if (isFtlDoc) {
-            String generatedContent = renderTemplate(documentFile.getTemplateContent(), jsonNode, RenderType.FREEMARKER);
-            return generatedContent.getBytes();
-        }  else {
-            throw new IllegalArgumentException("Template not identified");
+        } else {
+            throw new IllegalArgumentException("Entity not found");
         }
     }
 
