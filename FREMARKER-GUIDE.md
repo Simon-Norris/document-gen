@@ -27,13 +27,13 @@ Hello, ${name}!
 ## **🔹 2. Control Structures**
 ### **a) Conditionals (`if`, `else`, `elseif`)**
 ```ftl
-<#if age < 18>
-  You are a minor.
-<#elseif age >= 18 && age < 60>
-  You are an adult.
-<#else>
-  You are a senior citizen.
-</#if>
+  <#if (age < 18)>
+    You are a minor.
+  <#elseif (age <= 60)>
+    You are an adult.
+  <#else>
+    You are a senior citizen.
+  </#if>
 ```
 
 ### **b) Switch Case (`choose`, `when`, `otherwise`)**
@@ -217,5 +217,5 @@ Outputs: `&lt;script&gt;alert('XSS');&lt;/script&gt;`
 ---
 
 ### 🚀 **With these rules, you can write clean, efficient, and powerful FTL templates!**
-### Please visit <link>https://freemarker.apache.org/</link> for more information.
+### Please visit <link>https://freemarker.apache.org/</link> and also <link>https://freemarker.sourceforge.io/docs/</link>for more information.
 
