@@ -30,11 +30,17 @@ public class GenerationService {
             boolean isFtlDoc = docType.equals("ftl");
 
             if (isWordDoc) {
-                return documentProcessorFactory.getProcessor(ProcessorType.WORD).process(documentFile.getTemplateContent(), jsonNode, RenderType.FREEMARKER);
+                return documentProcessorFactory
+                        .getProcessor(ProcessorType.WORD)
+                        .process(documentFile.getTemplateContent(), jsonNode, RenderType.FREEMARKER);
             } else if (isHtmlDoc) {
-                return documentProcessorFactory.getProcessor(ProcessorType.HTML).process(documentFile.getTemplateContent(), jsonNode, RenderType.FREEMARKER);
+                return documentProcessorFactory
+                        .getProcessor(ProcessorType.HTML)
+                        .process(documentFile.getTemplateContent(), jsonNode, RenderType.FREEMARKER);
             } else if (isFtlDoc) {
-                return documentProcessorFactory.getProcessor(ProcessorType.FTL).process(documentFile.getTemplateContent(), jsonNode, RenderType.FREEMARKER);
+                return documentProcessorFactory
+                        .getProcessor(ProcessorType.FTL)
+                        .process(documentFile.getTemplateContent(), jsonNode, RenderType.FREEMARKER);
             } else {
                 throw new IllegalArgumentException("Document type not identified");
             }

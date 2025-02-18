@@ -100,45 +100,4 @@ public class DocumentController {
             return ResponseEntity.status(500).body(null);
         }
     }
-
-    @PostMapping("/create-rich-template")
-    public ResponseEntity<?> uploadFile(@RequestBody RichTemplateRequest request) {
-        if (request == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request invalid");
-
-        try {
-            RichTemplate richTemplate = new RichTemplate();
-            richTemplate.setContent(request.content());
-            richTemplate.setName(request.name());
-            richTemplate.setJson(request.json());
-            richTemplate.setLocalDateTime(LocalDateTime.now());
-
-            RichTemplate save = richTemplateService.save(richTemplate);
-            return ResponseEntity.status(HttpStatus.CREATED).body(Collections.singletonMap("templateId", save.getId()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-
-    @GetMapping("/generate/{id}")
-    public ResponseEntity<byte[]> generate(@PathVariable Long id) {
-        Optional<RichTemplate> richTemplateOptional = richTemplateService.findById(id);
-        if (richTemplateOptional.isEmpty()) return ResponseEntity.notFound().build();
-
-        RichTemplate documentFile = richTemplateOptional.get();
-
-        try {
-            byte[] processedDocument = generationService.generateDocument(documentFile, "ftl");
-
-            String fileName = "generated.txt";
-            MediaType contentType  = MediaType.TEXT_PLAIN;
-
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
-                    .contentType(contentType)
-                    .body(processedDocument);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
-        }
-    }
 }
