@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Optional;
 
 @RestController
@@ -72,6 +73,12 @@ public class RichTextController {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=output.txt")
                     .contentType(MediaType.TEXT_PLAIN)
                     .body(processedDocument);
+        } catch (RuntimeException e ) {
+            e.printStackTrace();
+            HashMap<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            error.put("cause", String.valueOf(e.getCause()));
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(error);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(Collections.singletonMap("error", e.getMessage()));
