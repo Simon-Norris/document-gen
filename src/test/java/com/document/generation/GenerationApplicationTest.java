@@ -1,7 +1,7 @@
 package com.document.generation;
 
 import com.document.generation.app.entity.DocumentFile;
-import com.document.generation.app.service.DocumentProcessor;
+import com.document.generation.app.service.GenerationService;
 import com.document.generation.core.DocumentRendererFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class GenerationApplicationTest {
 
     @Autowired
-    private DocumentProcessor documentProcessor;
+    private GenerationService generationService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -35,14 +35,14 @@ public class GenerationApplicationTest {
 
     @Test
     public void testGenerateDocument() {
-        byte[] generatedDocument = documentProcessor.generateDocument(testDocumentFile, "html");
+        byte[] generatedDocument = generationService.generateDocument(testDocumentFile, "html");
 
         assertNotNull(generatedDocument, "The generated document should not be null.");
     }
 
     @Test
     public void testDocumentProcessor() {
-        assertNotNull(documentProcessor, "DocumentProcessor should be loaded in the application context.");
+        assertNotNull(generationService, "DocumentProcessor should be loaded in the application context.");
     }
 
     @Test

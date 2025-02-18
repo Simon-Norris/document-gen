@@ -3,8 +3,8 @@ package com.document.generation.app.controller;
 import com.document.generation.app.dto.RichTemplateRequest;
 import com.document.generation.app.entity.DocumentFile;
 import com.document.generation.app.entity.RichTemplate;
-import com.document.generation.app.service.DocumentProcessor;
 import com.document.generation.app.service.DocumentService;
+import com.document.generation.app.service.GenerationService;
 import com.document.generation.app.service.RichTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +27,7 @@ public class DocumentController {
     private DocumentService documentService;
 
     @Autowired
-    private DocumentProcessor documentProcessor;
+    private GenerationService generationService;
 
     @Autowired
     private RichTemplateService richTemplateService;
@@ -71,7 +71,7 @@ public class DocumentController {
         }
 
         try {
-            byte[] processedDocument = documentProcessor.generateDocument(documentFile, savedFormat);
+            byte[] processedDocument = generationService.generateDocument(documentFile, savedFormat);
 
             String fileName = "generated." + savedFormat.toLowerCase();
             MediaType contentType;
@@ -127,7 +127,7 @@ public class DocumentController {
         RichTemplate documentFile = richTemplateOptional.get();
 
         try {
-            byte[] processedDocument = documentProcessor.generateDocument(documentFile, "ftl");
+            byte[] processedDocument = generationService.generateDocument(documentFile, "ftl");
 
             String fileName = "generated.txt";
             MediaType contentType  = MediaType.TEXT_PLAIN;
