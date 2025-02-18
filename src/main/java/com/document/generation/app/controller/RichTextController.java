@@ -9,6 +9,7 @@ import com.document.generation.core.processor.DocumentProcessorFactory;
 import com.document.generation.core.processor.ProcessorType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,13 +42,7 @@ public class RichTextController {
         if (request == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", "Bad request"));
 
         try {
-            RichTemplate richTemplate = new RichTemplate();
-            richTemplate.setContent(request.content());
-            richTemplate.setName(request.name());
-            richTemplate.setJson(request.json());
-            richTemplate.setLocalDateTime(LocalDateTime.now());
-
-            RichTemplate save = richTemplateService.save(richTemplate);
+            RichTemplate save = richTemplateService.save(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(Collections.singletonMap("templateId", save.getId()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", e.getMessage()));
@@ -65,7 +60,7 @@ public class RichTextController {
         try {
             JsonNode jsonNode = JsonValidator.parseJson(objectMapper, template.getJson());
 
-            byte[] processedDocument = documentProcessorFactory
+            String processedDocument = documentProcessorFactory
                     .getProcessor(ProcessorType.SIMPLE)
                     .process(template.getContent(), jsonNode, RenderType.FREEMARKER);
 

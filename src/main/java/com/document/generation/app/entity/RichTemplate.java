@@ -17,7 +17,7 @@ public class RichTemplate {
 
     LocalDateTime localDateTime = LocalDateTime.now();
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     String name;
 
     @Column(columnDefinition = "TEXT", nullable = false)
