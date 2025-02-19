@@ -291,4 +291,31 @@ public class FreeMarkerRendererTest {
 
         assertEquals(expectedOutput, renderedOutput);
     }
+
+    @Test
+    public void testRenderTemplateWhiteSpaceStrFail() {
+        String templateString = "<html>\n" +
+                " <head></head>\n" +
+                " <body>\n" +
+                "  <p>Hello, ${name} <#if (age < 18)> You are a minor. <#elseif (age <= 60)> You are an adult. <#else> You are a senior citizen. </#if> Items: <#list items as item> ${item_index + 1}. ${item.name} </#list></p>\n" +
+                " </body>\n" +
+                "</html>";
+
+        Map<String, Object> dataModel = new HashMap<>();
+
+        List<Map<String, Object>> items = new ArrayList<>();
+
+        items.add(Map.of("name", "Watch"));
+        items.add(Map.of("name", "Earbuds"));
+        items.add(Map.of("name", "Laptop"));
+
+        dataModel.put("name", "John");
+        dataModel.put("age", 25);
+        dataModel.put("items", items);
+
+
+        assertThrows(RuntimeException.class, () -> {
+            freemarkerRenderer.render(templateString.getBytes(), dataModel);
+        });
+    }
 }
