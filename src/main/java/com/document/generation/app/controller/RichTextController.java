@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
@@ -59,7 +60,7 @@ public class RichTextController {
             JsonNode jsonNode = JsonValidator.parseJson(objectMapper, template.getJson());
 
             String processedDocument = documentProcessorFactory
-                    .getProcessor(ProcessorType.SIMPLE)
+                    .getProcessor(ProcessorType.FTL)
                     .process(template.getContent(), jsonNode, RenderType.FREEMARKER);
 
             return ResponseEntity.ok()

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -266,5 +267,28 @@ public class FreeMarkerRendererTest {
         assertThrows(IllegalArgumentException.class, () -> {
             freemarkerRenderer.render(templateString.getBytes(), dataModel);
         });
+    }
+
+    @Test
+    public void testRenderTemplateWhiteSpaceStrSuccess() {
+        String templateString = "<p>Hello, ${name} <#if (age < 18)> You are a minor. <#elseif (age <= 60)> You are an adult. <#else> You are a senior citizen. </#if> Items: <#list items as item> ${item_index + 1}. ${item.name} </#list></p>";
+
+        Map<String, Object> dataModel = new HashMap<>();
+
+        List<Map<String, Object>> items = new ArrayList<>();
+
+        items.add(Map.of("name", "Watch"));
+        items.add(Map.of("name", "Earbuds"));
+        items.add(Map.of("name", "Laptop"));
+
+        dataModel.put("name", "John");
+        dataModel.put("age", 25);
+        dataModel.put("items", items);
+
+        String renderedOutput = freemarkerRenderer.render(templateString.getBytes(), dataModel);
+
+        String expectedOutput = "<p>Hello, John  You are an adult.  Items:  1. Watch  2. Earbuds  3. Laptop </p>";
+
+        assertEquals(expectedOutput, renderedOutput);
     }
 }
