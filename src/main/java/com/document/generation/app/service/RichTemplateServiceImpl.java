@@ -27,6 +27,8 @@ public class RichTemplateServiceImpl implements RichTemplateService {
         String decodedContent = extractContentFromHtml(request.content());
         decodedContent = StringEscapeUtils.unescapeHtml4(decodedContent);
 
+        decodedContent = decodedContent.replace('\u00A0', ' ');
+
 
         Optional<RichTemplate> byName = richTemplateRepo.findByName(request.name());
         RichTemplate richTemplate = byName.orElseGet(RichTemplate::new);

@@ -60,7 +60,7 @@ public class RichTextController {
             JsonNode jsonNode = JsonValidator.parseJson(objectMapper, template.getJson());
 
             String processedDocument = documentProcessorFactory
-                    .getProcessor(ProcessorType.FTL)
+                    .getProcessor(ProcessorType.SIMPLE)
                     .process(template.getContent(), jsonNode, RenderType.FREEMARKER);
 
             return ResponseEntity.ok()
