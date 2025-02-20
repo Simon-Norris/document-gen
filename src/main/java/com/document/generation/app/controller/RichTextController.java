@@ -79,4 +79,32 @@ public class RichTextController {
         }
     }
 
+    @GetMapping("/generate-response/{id}")
+    public ResponseEntity<?> generateResponse(@PathVariable Long id) {
+        Optional<RichTemplate> richTemplateOptional = richTemplateService.findById(id);
+        if (richTemplateOptional.isEmpty())
+            return ResponseEntity.status(400).body(Collections.singletonMap("error", "Template not found"));
+
+        RichTemplate template = richTemplateOptional.get();
+
+        try {
+            JsonNode jsonNode = JsonValidator.parseJson(objectMapper, template.getJson());
+
+            String processedDocument = documentProcessorFactory
+                    .getProcessor(ProcessorType.SIMPLE)
+                    .process(template.getContent(), jsonNode, RenderType.FREEMARKER);
+
+            return ResponseEntity.status(200).body(Collections.singletonMap("response", processedDocument));
+        } catch (RuntimeException e ) {
+            e.printStackTrace();
+            HashMap<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            error.put("cause", String.valueOf(e.getCause()));
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(error);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Collections.singletonMap("error", e.getMessage()));
+        }
+    }
+
 }
