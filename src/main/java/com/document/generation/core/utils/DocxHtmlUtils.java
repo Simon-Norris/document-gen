@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 
 public class DocxHtmlUtils {
 
-    public static String convert(File docxFile) {
+    public static String convertToHtml(File docxFile) {
         try {
             WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(docxFile);
 
@@ -32,7 +32,7 @@ public class DocxHtmlUtils {
         }
     }
 
-    public static String convert(InputStream inputStream) {
+    public static String convertToHtml(InputStream inputStream) {
         try {
             WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(inputStream);
 
@@ -52,7 +52,7 @@ public class DocxHtmlUtils {
         }
     }
 
-    public static byte[] revert(String htmlContent) {
+    public static byte[] convertToDocx(String htmlContent) {
         try {
 
             WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
@@ -72,9 +72,9 @@ public class DocxHtmlUtils {
 
     public static void main(String[] args) {
         File docxFile = new File("C:\\Workspace\\Documents\\RD\\DOC-GEN\\WORD\\sample-word.docx");
-        String htmlContent = convert(docxFile);
+        String htmlContent = convertToHtml(docxFile);
         System.out.println(htmlContent);
-        byte[] revert = revert(htmlContent);
+        byte[] revert = convertToDocx(htmlContent);
         System.out.println(revert.toString());
     }
 }

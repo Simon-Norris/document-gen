@@ -26,16 +26,16 @@ public class WordProcessor implements DocumentProcessor {
 
         if (template instanceof byte[] templateContent) {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(templateContent);
-            String extractTextFromDocx = DocxHtmlUtils.convert(byteArrayInputStream);
+            String extractTextFromDocx = DocxHtmlUtils.convertToHtml(byteArrayInputStream);
             String decodedContent = StringEscapeUtils.unescapeHtml4(extractTextFromDocx);
 
             decodedContent = decodedContent.replace('\u00A0', ' ');
             String response = this.rendererFactory.getRenderer(renderType).render(decodedContent, jsonNode);
-            return (R) DocxHtmlUtils.revert(response);
+            return (R) DocxHtmlUtils.convertToDocx(response);
         } else if (template instanceof File templateContent) {
-            String extractTextFromDocx = DocxHtmlUtils.convert(templateContent);
+            String extractTextFromDocx = DocxHtmlUtils.convertToHtml(templateContent);
             String response = this.rendererFactory.getRenderer(renderType).render(extractTextFromDocx, jsonNode);
-            return (R) DocxHtmlUtils.revert(response);
+            return (R) DocxHtmlUtils.convertToDocx(response);
         } else {
             throw new IllegalArgumentException("Template Not supported");
         }
