@@ -5,6 +5,7 @@ import com.document.generation.app.entity.RichTemplate;
 import com.document.generation.app.utils.JsonValidator;
 import com.document.generation.core.RenderType;
 import com.document.generation.core.processor.DocumentProcessorFactory;
+import com.document.generation.core.utils.DocxHtmlUtils;
 import com.document.generation.core.processor.ProcessorType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

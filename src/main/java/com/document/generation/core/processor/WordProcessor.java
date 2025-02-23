@@ -2,7 +2,9 @@ package com.document.generation.core.processor;
 
 import com.document.generation.core.DocumentRendererFactory;
 import com.document.generation.core.RenderType;
+import com.document.generation.core.utils.DocxHtmlUtils;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
@@ -23,13 +25,17 @@ public class WordProcessor implements DocumentProcessor {
     public <T, R> R process(T template, JsonNode jsonNode, RenderType renderType) {
 
         if (template instanceof byte[] templateContent) {
-            String extractTextFromDocx = extractTextFromDocx(templateContent);
-            String response = this.rendererFactory.getRenderer(renderType).render(extractTextFromDocx, jsonNode);
-            return (R) createWordDocument(response);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(templateContent);
+            String extractTextFromDocx = DocxHtmlUtils.convert(byteArrayInputStream);
+            String decodedContent = StringEscapeUtils.unescapeHtml4(extractTextFromDocx);
+
+            decodedContent = decodedContent.replace('\u00A0', ' ');
+            String response = this.rendererFactory.getRenderer(renderType).render(decodedContent, jsonNode);
+            return (R) DocxHtmlUtils.revert(response);
         } else if (template instanceof File templateContent) {
-            String extractTextFromDocx = extractTextFromDocx(templateContent);
+            String extractTextFromDocx = DocxHtmlUtils.convert(templateContent);
             String response = this.rendererFactory.getRenderer(renderType).render(extractTextFromDocx, jsonNode);
-            return (R) createWordDocument(response);
+            return (R) DocxHtmlUtils.revert(response);
         } else {
             throw new IllegalArgumentException("Template Not supported");
         }

@@ -83,17 +83,22 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-<!--		&lt;!&ndash; Docx4j with JAXB fix &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>org.docx4j</groupId>-->
-<!--			<artifactId>docx4j-core</artifactId>-->
-<!--			<version>11.4.9</version>-->
-<!--		</dependency>-->
-<!--		<dependency>-->
-<!--			<groupId>org.docx4j</groupId>-->
-<!--			<artifactId>docx4j-JAXB-ReferenceImpl</artifactId>-->
-<!--			<version>11.4.9</version>-->
-<!--		</dependency>-->
+		<!-- Docx4j with JAXB fix -->
+		<dependency>
+			<groupId>org.docx4j</groupId>
+			<artifactId>docx4j-core</artifactId>
+			<version>11.4.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.docx4j</groupId>
+			<artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
+			<version>11.4.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.docx4j</groupId>
+			<artifactId>docx4j-ImportXHTML</artifactId>
+			<version>11.4.8</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.github.spullara.mustache.java</groupId>
