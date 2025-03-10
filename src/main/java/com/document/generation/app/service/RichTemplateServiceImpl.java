@@ -25,15 +25,15 @@ public class RichTemplateServiceImpl implements RichTemplateService {
     @Override
     public RichTemplate save(RichTemplateRequest request) {
 //        String decodedContent = extractContentFromHtml(request.content());
-        String decodedContent = StringEscapeUtils.unescapeHtml4(request.content());
-
-        decodedContent = decodedContent.replace('\u00A0', ' ');
+//        String decodedContent = StringEscapeUtils.unescapeHtml4(request.content());
+//
+//        decodedContent = decodedContent.replace('\u00A0', ' ');
 
 
         Optional<RichTemplate> byName = richTemplateRepo.findByName(request.name());
         RichTemplate richTemplate = byName.orElseGet(RichTemplate::new);
 
-        richTemplate.setContent(decodedContent);
+        richTemplate.setContent(request.content());
         richTemplate.setName(request.name());
         richTemplate.setJson(request.json());
         richTemplate.setLocalDateTime(LocalDateTime.now());

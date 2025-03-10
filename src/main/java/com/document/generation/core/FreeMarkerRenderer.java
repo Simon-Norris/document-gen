@@ -5,6 +5,7 @@ import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import freemarker.template.TemplateExceptionHandler;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +20,10 @@ public class FreeMarkerRenderer implements DocumentRenderer {
 
         freemarkerConfig = new Configuration(Configuration.VERSION_2_3_31);
         freemarkerConfig.setDefaultEncoding("UTF-8");
+        freemarkerConfig.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+        freemarkerConfig.setLogTemplateExceptions(false);
+        freemarkerConfig.setWrapUncheckedExceptions(true);
+        freemarkerConfig.setFallbackOnNullLoopVariable(false);
 
         // Set default template loader to the file system
         freemarkerConfig.setTemplateLoader(createTemplateLoader());
