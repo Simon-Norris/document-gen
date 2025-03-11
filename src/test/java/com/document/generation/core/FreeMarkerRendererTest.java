@@ -1,6 +1,7 @@
 package com.document.generation.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import freemarker.template.Configuration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -18,11 +19,12 @@ public class FreeMarkerRendererTest {
 
     private FreeMarkerRenderer freemarkerRenderer;
     private ObjectMapper objectMapper;
+    private Configuration freemarkerConfiguration;
 
     @BeforeEach
     public void setUp() {
         objectMapper = new ObjectMapper();
-        freemarkerRenderer = new FreeMarkerRenderer(objectMapper);
+        freemarkerRenderer = new FreeMarkerRenderer(objectMapper, freemarkerConfiguration);
     }
 
     @Test
