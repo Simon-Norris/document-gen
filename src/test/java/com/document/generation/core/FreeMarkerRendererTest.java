@@ -1,7 +1,9 @@
 package com.document.generation.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
+import freemarker.template.TemplateExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -24,6 +26,7 @@ public class FreeMarkerRendererTest {
     @BeforeEach
     public void setUp() {
         objectMapper = new ObjectMapper();
+        freemarkerConfiguration = getFreemarkerConfiguration();
         freemarkerRenderer = new FreeMarkerRenderer(objectMapper, freemarkerConfiguration);
     }
 
@@ -349,5 +352,17 @@ public class FreeMarkerRendererTest {
         String expectedOutput = "<html>\n <head></head>\n <body>\n  <p>Hello, John  You are an adult.  Items:  1. Watch  2. Earbuds  3. Laptop </p>\n </body>\n</html>";
 
         assertEquals(expectedOutput, renderedOutput);
+    }
+
+    public Configuration getFreemarkerConfiguration(){
+        freemarker.template.Configuration freemarkerConfig = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_31);
+        freemarkerConfig.setDefaultEncoding("UTF-8");
+        freemarkerConfig.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+        freemarkerConfig.setLogTemplateExceptions(false);
+        freemarkerConfig.setWrapUncheckedExceptions(true);
+        freemarkerConfig.setFallbackOnNullLoopVariable(false);
+
+        freemarkerConfig.setTemplateLoader(new ClassTemplateLoader(FreeMarkerRenderer.class, "/"));
+        return freemarkerConfig;
     }
 }
