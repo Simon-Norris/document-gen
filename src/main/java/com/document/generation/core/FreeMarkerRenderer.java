@@ -30,7 +30,7 @@ public class FreeMarkerRenderer implements DocumentRenderer {
                 String templateString = new String(templateBytes, StandardCharsets.UTF_8);
                 freemarkerTemplate = new Template(templateName, templateString, freemarkerConfig);
             } else if (template instanceof String templateStr) {
-                if (isClasspathResource(templateStr)) {
+                if (templateStr.startsWith("classpath:")) {
                     freemarkerTemplate = freemarkerConfig.getTemplate(templateStr.replace("classpath:", ""));
                 } else {
                     freemarkerTemplate = new Template(templateName, templateStr, freemarkerConfig);
@@ -54,10 +54,6 @@ public class FreeMarkerRenderer implements DocumentRenderer {
         } catch (Exception e) {
             throw new RuntimeException("Error processing Freemarker template", e);
         }
-    }
-
-    private boolean isClasspathResource(String templateStr) {
-        return templateStr.startsWith("classpath:");
     }
 
 }
