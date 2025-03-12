@@ -26,24 +26,20 @@ public class FreeMarkerRenderer implements DocumentRenderer {
         String templateName = "template";
 
         try {
-            if (template instanceof byte[]) {
-                byte[] templateBytes = (byte[]) template;
+            if (template instanceof byte[] templateBytes) {
                 String templateString = new String(templateBytes, StandardCharsets.UTF_8);
                 freemarkerTemplate = new Template(templateName, templateString, freemarkerConfig);
-            } else if (template instanceof String) {
-                String templateStr = (String) template;
+            } else if (template instanceof String templateStr) {
                 if (isClasspathResource(templateStr)) {
                     freemarkerTemplate = freemarkerConfig.getTemplate(templateStr.replace("classpath:", ""));
                 } else {
                     freemarkerTemplate = new Template(templateName, templateStr, freemarkerConfig);
                 }
-            } else if (template instanceof File) {
-                File templateFile = (File) template;
+            } else if (template instanceof File templateFile) {
                 freemarkerTemplate = new Template(templateName,
                         new InputStreamReader(new FileInputStream(templateFile), StandardCharsets.UTF_8),
                         freemarkerConfig);
-            } else if (template instanceof InputStream) {
-                InputStream templateStream = (InputStream) template;
+            } else if (template instanceof InputStream templateStream) {
                 freemarkerTemplate = new Template(templateName,
                         new InputStreamReader(templateStream, StandardCharsets.UTF_8),
                         freemarkerConfig);
